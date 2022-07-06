@@ -71,8 +71,11 @@ void DHT_Test() {
   
 }
 
+SoftwareSerial bluetooth(1, 2);
+
 void setup() {
   Serial.begin(9600);
+  bluetooth.begin(9600);
 
   pmsSerial.begin(9600);
 
@@ -128,6 +131,22 @@ void setup() {
 void loop() {
   int light = analogRead(A0);
   int brightness = map(light, 0, 1024, 255, 0);
+
+  char val = bluetooth.read();
+
+  if (bluetooth.available())
+  {
+    Serial.write(bluetooth.read());
+  }
+
+  if (val == "FanOff") {
+    pinMode(FanPWM,LOW);
+  }
+
+  if (val == "FanOn") {
+    pinMode(FanPWM,HIGH);
+  }
+
 
   if (pms.read(data)) {
     tft.setBacklightBrightness(brightness);
